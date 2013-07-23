@@ -1,0 +1,185 @@
+#--------------------------------------------------------------------------------------------------
+# Pacote gráfico padrão R
+#
+# Gorgens, Eric Bastos
+# Department of Forest Sciences 
+# University of Sao Paulo
+# Piracicaba, Brazil
+# gorgens (at) usp.br
+#
+# Last revision: 2013-06-22
+#--------------------------------------------------------------------------------------------------
+
+# Exemplo 1 (fonte: http://ecologia.ib.usp.br/bie5782/doku.php?id=bie5782:03_apostila:05a-graficos)
+
+# Os dados dentro do R podem ser armazenados em vetores, matrizes, data frames e listas
+# Nem todas as estruturas de armazenamento são compatíveis com todas as funções
+
+# Este é um exemplo com vetores
+riqueza <- c(15,18,22,24,25,30,31,34,37,39,41,45)
+area <- c(2,4.5,6,10,30,34,50,56,60,77.5,80,85)
+area.cate <- rep(c("pequeno", "grande"), each=6) # vai repetir o pequeno 6 vezes e o grande 6 vezes sendo transformado em caracteres
+
+area.cate
+head(area.cate) # mostra o cabeçalho e as primeiras linhas do arquivo
+
+# Gráfico de dispersão
+?plot
+plot(riqueza~area)
+plot(area,riqueza) # escrita alternativa
+abline(lm(riqueza~area)) # colocando a linha de tendência
+plot(area~riqueza, xlab="Area (m²)", ylab="Riqueza", xlim=c(0,90), ylim=c(0,90), main="Riqueza = f(area)") # este gráfico sairia errado
+plot(riqueza~area, xlab="Area (m²)", ylab="Riqueza", xlim=c(0,90), ylim=c(0,90), main="Riqueza = f(area)") 
+# lab é o título 
+# lim é o máximo do eixo e 
+# main é o título do grafico
+
+# Boxplot
+boxplot(riqueza~area.cate)
+
+# Gráfico de barras
+barplot(riqueza)
+
+#Histograma
+?hist
+hist(riqueza)
+hist(riqueza, xlab="Riqueza", ylab="Frequência", main="Histograma da Riqueza")
+# Foi alterado a formatação do gráfico e retirada os valores máximos e mínimos
+
+cbind(riqueza,area,area.cate)
+#cbind colar linhas
+d = cbind(riqueza,area,area.cate) # criou uma matriz
+# Vamos pegar só uma parte desta matriz exemplo o "grande"
+d[d$area.cate=="grande",] # , indica que ele fique com as linhas que atendam a condição de ser grande
+#vai dar erro ele não conseguiu inrepretar
+#forçar que ele seje uma matriz
+# [ ] o colchete indica que vai vai acessar o conteúdo do d
+d=as.matriz(d)
+d[d$area.cate=="grande",]
+d=as.data.frame(d) # transformando em data frame
+d[d$area.cate=="grande",] # , indica que ele fique com as linhas que atendam a condição de ser grande a primeira parte é da linha (area.cate=="grande)
+# a virgula no final indica que você quer todas as linhas da coluna area.cate
+
+d1=d[d$area.cate=="grande",] # foi criado outra variavel d1
+d1
+
+d[d$area.cate=="pequeno",] # , indica que ele fique com as linhas que atendam a condição de ser pequeno
+d2=d[d$area.cate=="pequeno",] # foi criado outra variavel d2
+d2
+# caso eu quisesse ter os valode área menor do que 34, antes transformar em data.frame
+d3=data.frame(riqueza, area, area.cate) #salvando em data frame
+d4=d3[d3$area<34,] #valores de área menor que 34
+d4
+
+#--------------------------------------------------------
+# Exemplo 2 (fonte: http://www.statmethods.net/graphs/creating.html)
+
+# O R possui um conjunto de dados para demosntração
+# Este é um exemplo com matriz
+attach(mtcars) #para não precisar usar o $
+head(mtcars)
+names(mtcars)
+
+#DICA SE DIGITAR OS PRIMEIROS NOMES DE UMA FUNÇÃO E APERTAR O Tab ele vai aparecer as funções
+#exemplo det(aperta Tab) vai aparecer as funções que inicia com det
+
+# Gráfico de dispersão
+plot(mtcars$wt, mtcars$mpg)
+abline(lm(mtcars$mpg~mtcars$wt))
+#ou coloca
+abline(lm(mpg~wt, data=mtcars))  # Rodando a regressão para mtcars
+title("Regression of MPG on Weight")
+
+#Mais exemplos 
+plot(mtcars$cyl, mtcars$mpg)
+abline(lm(mtcars$mpg~mtcars$cyl))  
+
+plot(mtcars$hp, mtcars$mpg)
+abline(lm(mtcars$mpg~mtcars$hp))
+
+
+
+# Histograma
+hist(mtcars$mpg, breaks=12, col="red") # 12 colunas na cor vermelha
+hist(mtcars$mpg, breaks=6, col="red")
+hist(mtcars$mpg, breaks=6, col="green")
+
+# Incluindo uma curva normal
+x <- mtcars$mpg
+h<-hist(x, breaks=10, col="red", xlab="Miles Per Gallon",
+   main="Histogram with Normal Curve")
+h  	# Vai sair uma lista de resultados de densidade, intervalos (mids)
+xfit<-seq(min(x),max(x),length=40) #vai começao do menor para o maior valor que tenha neste vetor outros valores que tenham 40 elementos
+# se colocar step=1 vai de um em um
+min(x)
+min(xfit)
+max(x)
+max(xfit)
+length(xfit)
+yfit<-dnorm(xfit,mean=mean(x),sd=sd(x))
+yfit
+yfit <- yfit*diff(h$mids[1:2])*length(x) #pegar o valor de yfit e muktiplicar pelo intervalo
+lines(xfit, yfit, col="blue", lwd=2)  #lwd indica a espessura da linha
+
+#exemplo para a variável disp
+
+# Histograma
+hist(mtcars$disp, breaks=12, col="red") # 12 colunas na cor vermelha
+
+# Incluindo uma curva normal
+x <- mtcars$disp
+h<-hist(x, breaks=10, col="red", xlab="Miles Per Gallon",
+   main="Histogram with Normal Curve")
+h		# Vai sair uma lista de resultados de densidade, intervalos (mids) vai mostra uma lista de objetos para gerar o gráfico
+# $breaks - COLUNAS
+# [1]  50 100 150 200 250 300 350 400 450 500
+
+# $counts VALORES NO Y
+#[1] 5 7 4 1 4 4 4 1 2
+
+# $density
+#[1] 0.003125 0.004375 0.002500 0.000625 0.002500 0.002500 0.002500 0.000625 0.001250
+
+# $mids - CENTRO DE CLASSE
+#[1]  75 125 175 225 275 325 375 425 475
+
+#$xname
+#[1] "x"
+
+#$equidist SE SÃO EQUIDISTANTES
+#[1] TRUE
+
+#attr(,"class")
+#[1] "histogram"
+
+xfit<-seq(min(x),max(x),length=40) #vai começao do menor para o maior valor que tenha neste vetor outros valores que tenham 40 elementos
+# se colocar step=1 vai de um em um
+min(x)
+min(xfit)
+max(x)
+max(xfit)
+length(xfit)
+yfit<-dnorm(xfit,mean=mean(x),sd=sd(x))
+yfit
+yfit <- yfit*diff(h$mids[1:2])*length(x) #pegar o valor de yfit e muktiplicar pelo intervalo
+lines(xfit, yfit, col="blue", lwd=2)  #lwd indica a espessura da linha
+
+
+#--------------------------------------------------------
+# Exemplo 3 (fonte: http://www.statmethods.net/advgraphs/correlograms.html)
+# Correlagramas
+require(corrgram) # ativa pacote
+# install.packages("corrgram") # Comando para instalar o pacote
+corrgram(mtcars, order=TRUE, lower.panel=panel.shade, # order - respeitar a sequencia do arquivo
+  	 upper.panel=panel.pie, text.panel=panel.txt,
+		 main="Car Milage Data in PC2/PC1 Order") # titulo definido
+# Vai aparecer um grafico com cor azul e vermelha ( azul correlação positiva e vermelho correlação negativa) 
+# Quanto mais escuro a cor maior a correlação.
+corrgram(mtcars, order=TRUE, lower.panel=panel.shade, # order - respeitar a sequencia do arquivo
+  	 upper.panel=panel.pts, text.panel=panel.txt,
+		 main="Car Milage Data in PC2/PC1 Order") # titulo definido
+		
+corrgram(aa, order=TRUE, lower.panel=panel.shade, # order - respeitar a sequencia do arquivo
+  	 upper.panel=panel.pie, text.panel=panel.txt,
+		 main="Car Milage Data in PC2/PC1 Order") # titulo definido
+		
